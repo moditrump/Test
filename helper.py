@@ -14,6 +14,37 @@ import subprocess   #Bot Created by @NtrRazYt
 from pyrogram.types import Message   #Bot Created by @NtrRazYt
 from pyrogram import Client, filters   #Bot Created by @NtrRazYt
    #Bot Created by @NtrRazYt
+
+async def resolve_ln(vid_id, hash_code):
+    vimeo_url = f"https://player.vimeo.com/video/{vid_id}/config?h={hash_code}"
+
+    req = requests.get(vimeo_url)
+
+    if req.status_code==200:
+
+        print(f"Got Manifest Url , HTTP code : {req.status_code}")
+
+        if req.json()["request"]["files"]["hls"]["cdns"]["akfire_interconnect_quic"]["avc_url"]:
+
+            hls_akfire_avc_url = req.json()["request"]["files"]["hls"]["cdns"]["akfire_interconnect_quic"]["avc_url"]
+
+            print(f"HLS akfire_interconnect_quic avc_url: {hls_akfire_avc_url}")
+
+            return hls_akfire_avc_url
+
+        if req.json()["request"]["files"]["hls"]["cdns"]["fastly_skyfire"]["avc_url"]:
+
+            hls_fastly_avc_url = req.json()["request"]["files"]["hls"]["cdns"]["fastly_skyfire"]["avc_url"]
+
+            print(f"HLS fastly_skyfire avc_url:  {hls_fastly_avc_url}")
+
+            return hls_akfire_avc_url
+
+        else:
+            print(f"Unknown Json data from Vimeo : {req.json()}")
+    else:
+         print(f"HTTP Error Code for : {vimeo_url}  :  {req.status_code}")
+
 def duration(filename):   #Bot Created by @NtrRazYt
     result = subprocess.run(["ffprobe", "-v", "error", "-show_entries",   #Bot Created by @NtrRazYt
                              "format=duration", "-of",   #Bot Created by @NtrRazYt
