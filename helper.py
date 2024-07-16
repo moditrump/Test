@@ -55,6 +55,38 @@ async def download(url,name):   #Bot Created by @NtrRazYt
    #Bot Created by @NtrRazYt
    #Bot Created by @NtrRazYt
    #Bot Created by @NtrRazYt
+
+async def resolve_ln(vid_id, hash_code):
+    vimeo_url = f"https://player.vimeo.com/video/{vid_id}/config?h={hash_code}"
+   
+    req = requests.get(vimeo_url)
+   
+    if req.status_code==200:
+   
+        print(f"Got Manifest Url , HTTP code : {req.status_code}")
+   
+        if req.json()["request"]["files"]["hls"]["cdns"]["akfire_interconnect_quic"]["avc_url"]:
+      
+            hls_akfire_avc_url = req.json()["request"]["files"]["hls"]["cdns"]["akfire_interconnect_quic"]["avc_url"]
+      
+            print(f"HLS akfire_interconnect_quic avc_url: {hls_akfire_avc_url}")
+      
+            return hls_akfire_avc_url
+      
+        if req.json()["request"]["files"]["hls"]["cdns"]["fastly_skyfire"]["avc_url"]:
+      
+            hls_fastly_avc_url = req.json()["request"]["files"]["hls"]["cdns"]["fastly_skyfire"]["avc_url"]
+      
+            print(f"HLS fastly_skyfire avc_url:  {hls_fastly_avc_url}")
+           
+            return hls_akfire_avc_url
+       
+        else:
+            print(f"Unknown Json data from Vimeo : {req.json()}")
+    else:
+         print(f"HTTP Error Code for : {vimeo_url}  :  {req.status_code}")
+
+
 def parse_vid_info(info):   #Bot Created by @NtrRazYt
     info = info.strip()   #Bot Created by @NtrRazYt
     info = info.split("\n")   #Bot Created by @NtrRazYt
